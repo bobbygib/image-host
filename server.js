@@ -43,11 +43,15 @@ return unsafe
 var images = [
 	{
 		author: "erty",
-		url: "http://www.catgifpage.com/gifs/318.gif"
+		id: 0,
+		url: "http://www.catgifpage.com/gifs/318.gif",
+		vote: 0 
 	},
 	{
 		author: "erty",
-		url: "http://www.catgifpage.com/gifs/212.gif"
+		id: 1,
+		url: "http://www.catgifpage.com/gifs/212.gif",
+		vote: 5
 	}
 ];
 
@@ -77,6 +81,21 @@ app.post("/api/login", function(req, res) {
 	}
 });
 
+function addVote(id){
+	for(var i = 0; i < images.length; i++){
+		console.log(images[i])
+		if(images[i].id == id){
+			images[i].vote++
+			return images[i];
+		}
+	}
+}
+
+app.post("/vote", function(req, res){
+	var id = req.body.id;
+	var obj = addVote(id);
+	res.send(JSON.stringify(obj.vote))
+})
 /*
 	GET /api/gallery
 	Returns JSON: The entire array of images
@@ -86,8 +105,9 @@ app.get("/api/gallery", function(req, res) {
 	res.send(JSON.stringify(images));
 });
 
-app.get("/api/img", function(req, res) {
-	res.send(JSON.stringify(images));
+app.get("/api/img/", function(req, res) {
+	var id = parseInt(req.params.id)
+	res.send(JSON.stringify(images[id]));
 });
 
 /*

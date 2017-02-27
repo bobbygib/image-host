@@ -11,7 +11,7 @@ GET /login [DONE]
 GET /upload [DONE]
 	HTML - New Upload Page
 
-GET /image/:id {IN PROCESSS}
+GET /image/:id {IN PROCESS            }
 	HTML - Show a single image
 	Hint: You'll need to provide some sort of id (maybe just use the array index?) for each image
 	Hint: You'll still need to send an empty HTML page, then get the image using AJAX

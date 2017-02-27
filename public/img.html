@@ -15,7 +15,6 @@
 	$.get('api/img/', function(res) {
 		// We have to parse, since we stringified on the backend
 		var images = JSON.parse(res);
-		for (var i = 0; i < images.length; i++) {
 			// for each image...
 			// build a new div
 			var container = $("<div></div>");
@@ -24,9 +23,10 @@
 			container.append("<p>" + images[i].author + "</p>");
 			// push the div into the gallery
 			$('#img').append(container);
-		}
-	});
+		});
+
 	</script>
 
 </body>
 </html>
+
