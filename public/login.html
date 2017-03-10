@@ -13,6 +13,7 @@
 	<input type="text" id="username" placeholder="Username">
 	<input type="password" id="password" placeholder="Password">
 	<button id="submit">Login</button>
+	<button id="signup">Sign Up</button>
 
 	<button id="logout">Logout</button>
 
@@ -32,6 +33,19 @@
 				}
 			});
 		});
+
+		$('#signup').click(function() {
+			$.post('/api/signup', {
+				username: $('#username').val(),
+				password: $('#password').val()
+			}, function(res) {
+				if(res === "success"){
+					document.location = "/"
+				} else {
+					$('#error').text(res);
+				}
+			})
+		})
 
 		$('#logout').click(function() {
 			// empty obj = no data sent

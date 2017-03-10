@@ -28,6 +28,8 @@ app.use(session({
 
 	We should always check dilligently on the backend to make sure that users aren't able to inject arbitrary javascript.
 */
+
+
 function escapeHtml(unsafe) {
 return unsafe
      .replace(/&/g, "&amp;")
@@ -36,6 +38,23 @@ return unsafe
      .replace(/"/g, "&quot;")
      .replace(/'/g, "&#039;");
 }
+
+function getUser(username, password) {
+	for(var userobj of users) {
+		if(username === userobj.username && password === userobj.password) {
+			return userobj;
+		} 
+	} return false
+} 
+
+function checkName(username){
+	for(var userobj of users) {
+		if(username === userobj.username) {
+			return true
+		} 
+	} return false
+} 	
+
 
 /*
 	This is our array of images... for now (until we get a proper database hooked up).
@@ -55,6 +74,18 @@ var images = [
 	}
 ];
 
+var users = [
+	{
+		username: "erty",
+		password: "1234"
+	},
+	{
+		username: "bob",
+		password: "shit"
+	}
+
+]
+
 /*
 	POST /api/login
 	Returns TEXT: "success" on successful login, "error" if username or password was wrong.
@@ -66,8 +97,7 @@ app.post("/api/login", function(req, res) {
 		return;
 	}
 	// Check if the username and password exist
-	if (req.body.username === "erty" &&
-		req.body.password === "1234") {
+	if (getUser (req.body.username, req.body.password)) {
 		/*
 			We are logged in! Modify req.session to store that info on the user's session object for future use
 		*/
@@ -80,6 +110,23 @@ app.post("/api/login", function(req, res) {
 		res.send("error");
 	}
 });
+
+app.post("/api/signup", function(req, res){
+	if (!req.body.username || !req.body.password) {
+		res.send("error");
+		return;
+	} 
+	if (!checkName(req.body.username)){
+		users.push({
+			username: req.body.username,
+			password: req.body.password
+		})
+		req.session.user = escapeHtml(req.body.username);
+		res.send("success");
+	} else {
+		res.send("username already exists")
+	}
+})
 
 function addVote(id){
 	for(var i = 0; i < images.length; i++){
@@ -159,7 +206,8 @@ app.post('/api/upload', function(req, res) {
 	// At this point we've passed the "guard clauses", and are allowed to push our image into the array. Note that we get the data for the username from our own req.session -- we don't allow the user to provide this.
 	images.push({
 		url: req.body.url,
-		author: req.session.user
+		author: req.session.user,
+		vote: 0
 	});
 
 	// Send success!
@@ -185,5 +233,5 @@ app.use(function(err, req, res, next) {
 
 // Actually Start the Server
 app.listen(8080, function() {
-	console.log("ok you have a server :)");
+	console.log("ok you have a server :) on " + 8080);
 });
